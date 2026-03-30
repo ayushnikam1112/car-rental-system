@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-md bg-body-light">
+  <div class="container-fluid">
+    <i class="fa-solid fa-car me-2"></i>
+    <a class="navbar-brand" href="/">RentEase</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link "  href="/">Home</a>
+        <a class="nav-link" href="/listings"> Cars</a>
+      
+        <% if(currUser && currUser.isAdmin) { %>
+     <li class="nav-item">
+       <a class="nav-link" href="/listings/new">Add Car</a>
+       </li>
+      <% } %>
+
+      <% if(currUser && currUser.isAdmin) { %>
+    <li class="nav-item">
+    <a class="nav-link" href="/bookings/admin">
+      Manage Bookings
+      </a>
+      
+  </li>
+<% } %>
+    <% if(currUser && currUser.isAdmin) { %>
+  <a href="/bookings/admin/dashboard" class="nav-link">Dashboard</a>
+<% } %>
+
+        <% if(currUser&&!currUser.isAdmin) { %>
+  <li class="nav-item">
+    <a class="nav-link " href="/bookings/my">My Bookings</a>
+  </li>
+<% } %>
+
+
+ <li class="nav-item">
+    <a class="nav-link" href="/terms">Terms</a>
+</li>
+
+
+      </div>
+
+       <div class="navbar-nav ms-auto">
+        <% if(!currUser) {%>
+        <a class="nav-link" href="/signup">Signup</a>
+        <a class="nav-link" href="/login">Login</a>
+        <% }%>
+        <% if(currUser) {%>
+         <a class="nav-link" href="/logout">Logout</a>
+         <% }%>
+      </div>
+
+    </div> 
+  </div> 
+</nav>

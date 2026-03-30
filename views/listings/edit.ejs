@@ -1,0 +1,48 @@
+<%layout("/layouts/boilerplate")%>
+<body>
+    <h3>Edit your listing</h3>
+
+    <form method="POST" action="/listings/<%= listing._id%>?_method=PUT" novalidate class="needs-validation">
+        <br>
+        <div class="mb-3">
+            <label for="title" class="form-label">Car Name / Model</label>
+            <input name="listing[title]" value="<%= listing.title%>" type="text" class="form-control" required>
+            <div class="invalid-feedback">Enter valid Title</div>  
+
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label">Car Description</label>
+            <textarea name="listing[description]" class="form-control" required><%= listing.description%></textarea>
+            <div class="invalid-feedback">enter at least 2 sentences</div>  
+
+        </div>
+    <div class="mb-3">
+  <label class="form-label">Upload New Image</label>
+  <input type="file" name="image" class="form-control">
+</div>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price/day</label>
+            <input name="listing[price]" value="<%= listing.price%>" type="number" class="form-control" >
+    <div class="invalid-feedback">Enter valid price</div>  
+
+        </div>
+        <div class="mb-3">
+             <label for="location" class="form-label">Pickup Location / Address</Address></label>
+            <input name="listing[location]" value="<%= listing.location%>" type="text" class="form-control" required>
+    <div class="invalid-feedback">Enter valid location</div>  
+
+        </div>
+        <div class="mb-3">
+              <label for="country" class="form-label">City</label>
+              <input name="listing[country]" value="<%= listing.country%>" type="text" class="form-control" required>
+            <div class="invalid-feedback">Enter valid City</div>  
+            </div>
+        <button class="btn btn-dark add-btn">Edit</button>
+        <br>
+    </form>
+</body>
+<br>
+enctype="multipart/form-data"
+<script src="/js/script.js"></script>

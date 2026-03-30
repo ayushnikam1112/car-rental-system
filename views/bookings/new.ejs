@@ -1,0 +1,78 @@
+<%layout("/layouts/boilerplate")%>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    
+    <div class="col-md-6">
+      <div class="card shadow-lg p-4 rounded-4">
+
+        <!-- Title -->
+        <h3 class="text-center mb-4">
+          Book <%= car.title %>
+        </h3>
+
+        <!-- Image -->
+        <img 
+          src="<%= car.image.url %>" 
+          class="img-fluid rounded mb-3"
+          style="height: 200px; object-fit: cover;"
+        >
+
+        <!-- Form -->
+        <form method="POST" action="/bookings/<%= car._id %>" novalidate class="needs-validation">
+
+          <!-- From Date -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">From Date</label>
+            <input 
+              type="date" 
+              name="fromDate"
+              id="fromDate" 
+              class="form-control"
+              required
+            >
+            <div class="invalid-feedback">Please select start date</div>
+          </div>
+
+          <!-- To Date -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">To Date</label>
+            <input 
+              type="date" 
+              name="toDate"
+              id="toDate" 
+              class="form-control"
+              required
+            >
+            <div class="invalid-feedback">Please select end date</div>
+          </div>
+
+          <!-- Price Info -->
+          <div class="mb-3 text-center">
+            <p class="text-muted mb-1">Price per day</p>
+            <h5 class="fw-bold">₹ <%= car.price.toLocaleString("en-IN") %></h5>
+          </div>
+          <div class="mb-3 text-center">
+            <p class="text-muted mb-1">Total Price</p>
+             <h4 id="totalPrice">₹ 0</h4>
+            </div>
+
+          <!-- Button -->
+          <button class="btn btn-dark w-100 rounded-pill">
+            Confirm Booking 
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  window.carPrice = Number("<%= car.price %>");
+</script>
+
+<!-- ✅ THEN LOAD YOUR JS -->
+<script src="/js/script.js"></script>

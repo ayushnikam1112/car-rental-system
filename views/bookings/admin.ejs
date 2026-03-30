@@ -1,0 +1,45 @@
+<% layout("/layouts/boilerplate") %>
+
+<h3 class="text-center mt-4">All Bookings (Admin)</h3>
+
+<div class="container mt-4">
+  <% bookings.forEach(b => { %>
+
+    <div class="card mb-3 shadow-sm p-3">
+      <h5><%= b.car.title %></h5> <br>
+      <p>
+     <b>User:</b> <%= b.user.username %> <br></p>
+    <p><b>Email:</b> <span class="text-primary"><%= b.user.email %></span>
+    </p>
+      <p>
+        <%= b.fromDate.toDateString() %> → 
+        <%= b.toDate.toDateString() %>
+      </p>
+      <p>Total: ₹ <%= b.totalPrice %></p>
+
+      <p>Status: 
+        <span class="
+          <%= b.status === 'approved' ? 'text-success' : '' %>
+          <%= b.status === 'rejected' ? 'text-danger' : '' %>
+          <%= b.status === 'pending' ? 'text-warning' : '' %>
+        ">
+          <%= b.status %>
+        </span>
+      </p>
+
+      <% if(b.status === "pending") { %>
+        <div class="btns">
+        <form method="POST" action="/bookings/<%= b._id %>/approve" class="d-inline">
+          <button class="btn btn-success btn-sm me-2">Approve</button>
+        </form>
+
+        <form method="POST" action="/bookings/<%= b._id %>/reject" class="d-inline">
+          <button class="btn btn-danger btn-sm">Reject</button>
+        </form>
+        </div>
+      <% } %>
+
+    </div>
+
+  <% }) %>
+</div>

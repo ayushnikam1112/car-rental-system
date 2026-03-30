@@ -1,0 +1,40 @@
+<%layout("/layouts/boilerplate")%>
+<div class="row">
+    <div class="col-8 offset-2">
+    <h3>Create a new listing</h3><br>
+    <form method="POST" action="/listings" novalidate class="needs-validation">
+       <div class="mb-3">
+        <label for="title" class="form-label">Car Name / Model</label>
+        <input name="listing[title]" placeholder="e.g. Hyundai Creta 2022" type="text" class="form-control" required>
+        <div class="valid-feedback">Title look good</div>
+       </div>
+       <div class="mb-3">
+         <label for="description" class="form-label">Car Description</label>
+        <textarea name="listing[description]" placeholder="Petrol • 5 Seater • Automatic" type="text" class="form-control"></textarea>
+       <div class="invalid-feedback">Enter valid desription</div>   
+    </div>
+       <div class="mb-3">
+       <label for="image" class="form-label">Image</label>
+        <input name="image" placeholder="Upload image " type="file" class="form-control">
+       </div>
+       <div class="mb-3">
+       <label for="price" class="form-label">Price/Day</label>
+      <input name="listing[price]" placeholder="₹ per day"  class="form-control" required>
+                <div class="invalid-feedback">Enter valid price</div>
+    </div>
+       <div class="mb-3">
+       <label for="location" class="form-label">Pickup Location / Address</label>
+       <input name="listing[location]" placeholder="e.g. Pune Airport" type="text" class="form-control" required>
+    <div class="invalid-feedback">Enter valid location</div>   
+    </div>
+       <div class="mb-3">
+       <label for="country" class="form-label">City</label>
+        <input name="listing[country]" placeholder="e.g. Pune, India" type="text" class="form-control" required>
+    <div class="invalid-feedback">Enter valid country</div>  
+    </div>
+        <br>
+        <button class="btn btn-dark add-btn">Add</button>
+    </form>
+    </div>
+</div>
+<br>
