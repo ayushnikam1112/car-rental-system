@@ -37,6 +37,7 @@ router.get("/", wrapAsync(async (req, res) => {
   if (location) {
     query.location = { $regex: location, $options: "i" };
   }
+  
   if (price) {
     query.price = { $lte: price };
   }

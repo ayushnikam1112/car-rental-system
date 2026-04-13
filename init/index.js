@@ -8,7 +8,7 @@ async function main() {
 }
 
 // Seed function
-const initDB = async () => {
+const initDB = async () => { 
   try {
     await Listing.deleteMany({});
     console.log("Old data deleted");

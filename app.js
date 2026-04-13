@@ -3,16 +3,15 @@ const app=express();
 const mongoose=require("mongoose");
 const path=require("path");
 const methodOverride=require("method-override");
-const ejsMate=require("ejs-mate")
-const ExpressError=require("./utils/ExpressError.js")
+const ejsMate=require("ejs-mate");
+const ExpressError=require("./utils/ExpressError.js");
 const Listing = require("./models/listing.js");
 const { listingSchema } = require("./schema.js");
-
+require("dotenv").config();
 const userRouter = require("./routes/user.js");
 const listingRouter=require("./routes/listing.js");
 const reviewRouter=require("./routes/review.js");
-
-const session=require("express-session")
+const session=require("express-session");
 const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy=require("passport-local").Strategy;

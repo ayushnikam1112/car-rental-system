@@ -8,7 +8,7 @@ const { saveRedirectUrl } = require("../middleware.js");
 
 // Signup form
 router.get("/signup", (req, res) => {
-    res.render("users/signup.ejs");
+    res.render("users/signup.ejs", { otpSent: false , userData: {}});
 });
 
 // Login form
@@ -16,29 +16,72 @@ router.get("/login", (req, res) => {
     res.render("users/login.ejs");
 });
 
-router.post("/signup",wrapAsync(async(req,res,next)=>{
-   try{
-    let {username,email,password}=req.body;
-    const newUser= new User({
-        email,
-        username
-    });
-    const registerUser=await User.register(newUser,password);
-    console.log(registerUser);
-    req.login(registerUser,(err)=>{
-        if(err){
-            return next(err);
-        } 
-    req.flash("success","Welcome");
-    //await newUser.save();
-    res.redirect("/");
-    });
-    
-   } catch(e){
-    req.flash("error",e.message);
-    res.redirect("/signup");
-   }
-    
+const sendEmail = require("../utils/email");
+
+router.post("/signup", wrapAsync(async (req, res, next) => {
+    try {
+let { username, email, password, otp, phone, phoneVerified } = req.body;
+
+        if (!phoneVerified) {
+            req.flash("error", "Please verify your phone first");
+            return res.redirect("/signup");
+        }
+
+        // 🔹 STEP 1: Send OTP
+        if (!otp) {
+            const generatedOtp = Math.floor(100000 + Math.random() * 900000);
+
+            req.session.otp = generatedOtp;
+            req.session.userData = { username, email, password, phone };
+            await sendEmail(
+                email,
+                "Your OTP",
+                `Your OTP is ${generatedOtp}`
+            );
+        console.log(generatedOtp);
+            return res.render("users/signup", { otpSent: true ,userData: req.session.userData  });
+        }
+
+        // 🔹 STEP 2: Verify OTP
+        if (otp == req.session.otp) {
+
+            const data = req.session.userData; 
+
+            const newUser = new User({
+                email: data.email,
+                username: data.username,
+                phone: data.phone
+            });
+
+            const registerUser = await User.register(newUser, data.password);
+
+            req.login(registerUser, async (err) => {
+                if (err) return next(err);
+
+                req.flash("success", "Signup Successful");
+
+                await sendEmail(
+                    data.email,
+                    "Welcome!",
+                    "Thanks for signing up"
+                );
+
+                // clear session
+                req.session.otp = null;
+                req.session.userData = null;
+
+                res.redirect("/");
+            });
+
+        } else {
+            req.flash("error", "Invalid OTP ");
+            res.render("users/signup", { otpSent: true, userData: req.session.userData }); 
+        }
+
+    } catch (e) {
+        req.flash("error", e.message);
+        res.redirect("/signup");
+    }
 }));
 
 
