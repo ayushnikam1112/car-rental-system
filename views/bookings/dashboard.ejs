@@ -1,12 +1,206 @@
 <% layout("/layouts/boilerplate") %>
 
-<h3 class="text-center mt-4">Admin Dashboard</h3>
+<h3 class="text-center mt-4 mb-4">Admin Dashboard</h3>
 
-<div class="container mt-4 d-flex gap-3 justify-content-center">
+<!-- TOP STATS -->
+<div class="container mt-4">
+  <div class="row g-4 text-center">
 
-  <div class="card p-3 shadow">Total: <%= total %></div>
-  <div class="card p-3 text-warning shadow">Pending: <%= pending %></div>
-  <div class="card p-3 text-success shadow">Approved: <%= approved %></div>
-  <div class="card p-3 text-danger shadow">Rejected: <%= rejected %></div>
+    <!-- Total -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm">
+       <i class="fa-solid fa-chart-simple"></i>
+        <h6>Total Bookings</h6>
+        <h3><%= total %></h3>
+      </div>
+    </div>
 
+    <!-- Pending -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm border-warning">
+        <i class="fa-solid fa-hourglass-half"></i>
+        <h6>Pending</h6>
+        <h3 class="text-warning"><%= pending %></h3>
+      </div>
+    </div>
+
+    <!-- Approved -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm border-success">
+       <i class="fa-solid fa-check"></i>
+        <h6>Approved</h6>
+        <h3 class="text-success"><%= approved %></h3>
+      </div>
+    </div>
+
+    <!-- Rejected -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm border-danger">
+        <i class="fa-solid fa-xmark"></i>
+        <h6>Rejected</h6>
+        <h3 class="text-danger"><%= rejected %></h3>
+      </div>
+    </div>
+
+    <!-- Weekly -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm">
+        <i class="fa-solid fa-calendar-week"></i>
+        <h6>Weekly</h6>
+        <h3><%= weeklyBookings %></h3>
+      </div>
+    </div>
+
+    <!-- Monthly -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm">
+<i class="fa-solid fa-calendar"></i>
+        <h6>Monthly</h6>
+        <h3><%= monthlyBookings %></h3>
+      </div>
+    </div>
+
+    <!-- Revenue -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm">
+        <i class="fa-solid fa-chart-line"></i>
+        <h6>Revenue</h6>
+        <h3>₹<%= totalRevenue %></h3>
+      </div>
+    </div>
+
+    <!-- Users -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm">
+        <i class="fa-solid fa-users"></i>
+        <h6>Users</h6>
+        <h3><%= totalUsers %></h3>
+      </div>
+    </div>
+
+    <!-- Cars -->
+    <div class="col-md-3">
+      <div class="card dashboard-card p-4 shadow-sm">
+        <i class="fa-solid fa-car"></i>
+        <h6>Cars</h6>
+        <h3><%= totalCars %></h3>
+      </div>
+    </div>
+
+  </div>
 </div>
+
+<!-- RECENT BOOKINGS -->
+<div class="container mt-5">
+  <h4 class="mb-3">Recent Bookings</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>User</th>
+          <th>Car</th>
+          <th>Price</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (recentBookings.length === 0) { %>
+          <tr>
+            <td colspan="4">No bookings yet</td>
+          </tr>
+        <% } %>
+
+        <% recentBookings.forEach(b => { %>
+          <tr>
+            <td><%= b.user?.username || "N/A" %></td>
+            <td><%= b.car?.title || "N/A" %></td>
+            <td>₹<%= b.totalPrice || 0 %></td>
+            <td>
+              <% if (b.status === "approved") { %>
+                <span class="badge bg-success">Approved</span>
+              <% } else if (b.status === "pending") { %>
+                <span class="badge bg-warning text-dark">Pending</span>
+              <% } else { %>
+                <span class="badge bg-danger">Rejected</span>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+
+    </table>
+  </div>
+</div>
+
+
+<div class="container mt-5">
+  <h4 class="mb-3">Booking Trends</h4>
+  <canvas id="bookingChart"></canvas>
+</div>
+
+<div class="container mt-5">
+  <h4 class="mb-3">Revenue Trends</h4>
+  <canvas id="revenueChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const data = JSON.parse('<%- JSON.stringify(bookingTrends || []) %>');
+  const labels = data.map(d => "Day " + d._id);
+  const values = data.map(d => d.count);
+
+  new Chart(document.getElementById("bookingChart"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Bookings",
+        data: values
+      }]
+    },
+    options: {
+  responsive: true,
+  plugins: {
+    legend: { display: true }
+  },scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+}
+  });
+</script>
+
+<script>
+  const revenueData = JSON.parse('<%- JSON.stringify(revenueTrends || []) %>');
+
+  const revenueLabels = revenueData.map(d => "Day " + (d._id || 0));
+  const revenueValues = revenueData.map(d => d.revenue || 0);
+
+  new Chart(document.getElementById("revenueChart"), {
+    type: "line",
+    data: {
+      labels: revenueLabels,
+      datasets: [{
+        label: "Revenue (₹)",
+        data: revenueValues,
+        fill: false,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>

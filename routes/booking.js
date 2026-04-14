@@ -13,16 +13,81 @@ router.get("/new/:id", isLoggedIn, async (req, res) => {
 
 const { isAdmin } = require("../middleware");
 router.get("/admin/dashboard", isLoggedIn, isAdmin, async (req, res) => {
+
+  // Basic stats
   const total = await Booking.countDocuments();
   const pending = await Booking.countDocuments({ status: "pending" });
   const approved = await Booking.countDocuments({ status: "approved" });
   const rejected = await Booking.countDocuments({ status: "rejected" });
 
+ 
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  const weeklyBookings = await Booking.countDocuments({
+    createdAt: { $gte: oneWeekAgo }
+  });
+
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+  const monthlyBookings = await Booking.countDocuments({
+    createdAt: { $gte: oneMonthAgo }
+  });
+
+  const revenueData = await Booking.find({ status: "approved" });
+
+  let totalRevenue = 0;
+  revenueData.forEach(b => {
+    totalRevenue += b.totalPrice || 0;
+  });
+
+
+  const recentBookings = await Booking.find({})
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .populate("user")
+    .populate("car");
+
+    const User = require("../models/user");
+const Listing = require("../models/listing");
+
+const totalUsers = await User.countDocuments();
+const totalCars = await Listing.countDocuments();
+const bookingTrends = await Booking.aggregate([
+  {
+    $group: {
+      _id: { $dayOfMonth: "$createdAt" },
+      count: { $sum: 1 }
+    }
+  },
+  { $sort: { "_id": 1 } }
+]);
+const revenueTrends = await Booking.aggregate([
+  {
+    $match: { status: "approved" } // only approved bookings
+  },
+  {
+    $group: {
+      _id: { $dayOfMonth: "$createdAt" },
+      revenue: { $sum: "$totalPrice" }
+    }
+  },
+  { $sort: { "_id": 1 } }
+]);
   res.render("bookings/dashboard", {
     total,
     pending,
     approved,
-    rejected
+    rejected,
+    weeklyBookings,
+    monthlyBookings,
+    totalRevenue,
+    recentBookings,
+    totalUsers,
+    totalCars,
+    bookingTrends,
+    revenueTrends
   });
 });
 
