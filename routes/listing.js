@@ -76,25 +76,22 @@ router.get("/:id",wrapAsync(async(req,res)=>{
 
 //create rout
 
-router.post("/",isLoggedIn,validateListing,wrapAsync(async(req,res,next)=>{
-   /* if(!req.body.listing){
-        throw new ExpressError(400,"send valid data ")
-    }*/
-  
-    const newListing= new Listing(req.body.listing);
-        if (req.file) {
-      newListing.image = {
-        url: req.file.path,
-        filename: req.file.filename
-      };
-    }
-    //console.log(req.user);
-    newListing.owner=req.user._id;
-    await newListing.save();
-    req.flash("success","New Listing Created!");
-    res.redirect("/listings");
-    
-}));
+router.post("/", upload.single("image"), async (req, res) => {
+
+  const newListing = new Listing(req.body.listing);
+
+  // 🔥 attach uploaded image
+  if (req.file) {
+    newListing.image = {
+      url: req.file.path,
+      filename: req.file.filename
+    };
+  }
+
+  await newListing.save();
+ req.flash("success","New Listing Created!");
+  res.redirect("/listings");
+});
 
 //edit rout
 
@@ -113,22 +110,28 @@ router.get("/:id/edit",isLoggedIn,isAdmin,wrapAsync(async(req,res,next)=>{
 
 //update rout
 
-router.put("/:id",isLoggedIn,isAdmin,validateListing,wrapAsync(async(req,res)=>{
-     /* if(!req.body.listing){
-        throw new ExpressError(400,"send valid data ")
-    }*/
-    let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,{...req.body.listing});
-     if (req.file) {
-      listing.image = {
-        url: req.file.path,
-        filename: req.file.filename
-      };
-      await listing.save();
-    }
-    req.flash("success","Updated Successfully!");
-    res.redirect(`/listings/${id}`);
-}));
+router.put("/:id", upload.single("image"), async (req, res) => {
+
+  console.log("FILE:", req.file);
+
+  let listing = await Listing.findById(req.params.id);
+
+  // update normal fields
+  listing.title = req.body.listing.title;
+  listing.description = req.body.listing.description;
+  listing.price = req.body.listing.price;
+  listing.location = req.body.listing.location;
+  listing.country = req.body.listing.country;
+
+  if (req.file) {
+    listing.image.url = req.file.path;
+    listing.image.filename = req.file.filename;
+  }
+
+  await listing.save();
+
+  res.redirect(`/listings/${listing._id}`);
+});
 
 // delete rout
 

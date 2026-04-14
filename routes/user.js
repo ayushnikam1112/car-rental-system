@@ -20,19 +20,15 @@ const sendEmail = require("../utils/email");
 
 router.post("/signup", wrapAsync(async (req, res, next) => {
     try {
-let { username, email, password, otp, phone, phoneVerified } = req.body;
+let { username, email, password, otp } = req.body;
 
-        if (!phoneVerified) {
-            req.flash("error", "Please verify your phone first");
-            return res.redirect("/signup");
-        }
 
         // 🔹 STEP 1: Send OTP
         if (!otp) {
             const generatedOtp = Math.floor(100000 + Math.random() * 900000);
 
             req.session.otp = generatedOtp;
-            req.session.userData = { username, email, password, phone };
+            req.session.userData = { username, email, password };
             await sendEmail(
                 email,
                 "Your OTP",

@@ -6,7 +6,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "CarRental",
-    allowed_formats: ["jpg", "png", "jpeg"]
+    allowed_formats: ["jpg", "png", "jpeg", "webp"] 
   }
 });
 

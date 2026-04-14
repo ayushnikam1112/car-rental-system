@@ -40,42 +40,8 @@
       </div>
       <div class="mb-3">
 
-        <div class="mb-3">
-  <label for="phone" class="form-label">Phone Number</label>
-  <input 
-    id="phone"
-    name="phone"
-    placeholder="+91XXXXXXXXXX"
-    type="text"
-    class="form-control"
-    required
-  >
-  <div class="invalid-feedback">Enter valid phone number</div>
-</div>
+  
 
-<div class="mb-3">
-  <button type="button" class="btn btn-outline-primary w-100" onclick="sendOTP()">
-    Send Phone OTP
-  </button>
-</div>
-
-<div class="mb-3">
-  <input 
-    type="text"
-    id="phoneOtp"
-    placeholder="Enter Phone OTP"
-    class="form-control"
-  >
-</div>
-
-<div class="mb-3">
-  <button type="button" class="btn btn-outline-success w-100" onclick="verifyOTP()">
-    Verify Phone
-  </button>
-</div>
-
-<input type="hidden" name="phoneVerified" id="phoneVerified">
-<div id="recaptcha-container"></div>
 
 
   <!-- Email -->
@@ -124,48 +90,3 @@
 </form>
 </div>
 
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDW4S1KAjJSvLV2ApA3dzq269FKRquGqmI",
-  authDomain: "rentease-ff3e7.firebaseapp.com",
-  projectId: "rentease-ff3e7",
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-  size: "normal"
-});
-
-function sendOTP() {
-  const phone = document.getElementById("phone").value;
-
-  firebase.auth().signInWithPhoneNumber(phone, window.recaptchaVerifier)
-    .then(function (confirmationResult) {
-      window.confirmationResult = confirmationResult;
-      alert("Phone OTP sent ");
-    })
-    .catch(function (error) {
-      console.log(error);
-      alert("Error sending OTP ");
-    });
-}
-
-function verifyOTP() {
-  const otp = document.getElementById("phoneOtp").value;
-
-  window.confirmationResult.confirm(otp)
-    .then(function () {
-      alert("Phone Verified ");
-      document.getElementById("phoneVerified").value = "true";
-    })
-    .catch(function () {
-      alert("Invalid OTP ");
-    });
-}
-</script>

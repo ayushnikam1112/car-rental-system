@@ -2,7 +2,7 @@
 <body>
     <h3>Edit your listing</h3>
 
-    <form method="POST" action="/listings/<%= listing._id%>?_method=PUT" novalidate class="needs-validation">
+    <form method="POST" action="/listings/<%= listing._id%>?_method=PUT"  enctype="multipart/form-data" novalidate class="needs-validation">
         <br>
         <div class="mb-3">
             <label for="title" class="form-label">Car Name / Model</label>
@@ -21,7 +21,7 @@
   <label class="form-label">Upload New Image</label>
   <input type="file" name="image" class="form-control">
 </div>
-        </div>
+    
         <div class="mb-3">
             <label for="price" class="form-label">Price/day</label>
             <input name="listing[price]" value="<%= listing.price%>" type="number" class="form-control" >
