@@ -52,3 +52,11 @@ toDate.addEventListener("change", calculatePrice);
 const today = new Date().toISOString().split("T")[0];
 fromDate.setAttribute("min", today);
 toDate.setAttribute("min", today);
+
+const form = document.querySelector("form");
+
+if (form) {
+  form.addEventListener("submit", () => {
+    document.getElementById("loader").style.display = "flex";
+  });
+}

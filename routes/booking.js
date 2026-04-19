@@ -97,6 +97,21 @@ router.post("/:id", isLoggedIn, async (req, res) => {
 
   const car = await Listing.findById(req.params.id);
 
+     const existingBooking = await Booking.findOne({
+    car:  car._id,
+    $or: [
+      {
+        fromDate: { $lte: toDate },
+        toDate: { $gte: fromDate }
+      }
+    ]
+  });
+
+  if (existingBooking) {
+    req.flash("error", "Car already booked for selected dates");
+    return   res.redirect("/bookings/my");
+
+  }
   const days =
     (new Date(toDate) - new Date(fromDate)) / (1000 * 60 * 60 * 24);
 

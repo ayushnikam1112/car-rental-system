@@ -68,11 +68,21 @@
     </div>
 
   </div>
+  
 </div>
-
+<br>
 <script>
   window.carPrice = Number("<%= car.price %>");
 </script>
 
-<!-- ✅ THEN LOAD YOUR JS -->
+
 <script src="/js/script.js"></script>
+<script>
+  const fromInput = document.getElementById("fromDate");
+  const toInput = document.getElementById("toDate");
+
+  fromInput.addEventListener("change", () => {
+    toInput.min = fromInput.value; // can't select before fromDate
+  });
+
+</script>
