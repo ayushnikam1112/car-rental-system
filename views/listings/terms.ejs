@@ -1,71 +1,199 @@
 <% layout("/layouts/boilerplate") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentEase | Terms & Conditions</title>
 
-<div class="container mt-4 mb-5">
-    <h1 class="text-center mb-4">Terms & Conditions</h1>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+        }
 
-    <h4>1. Eligibility</h4>
-    <p>
-        Users must be at least 21 years old and possess a valid driving license.
-        Only registered drivers are allowed to operate the rented vehicle.
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .card ul {
+            margin: 10px 0 0 20px;
+        }
+
+        .closing {
+            margin-top: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Terms & Conditions</h1>
+    <p>RentEase Platform Policies</p>
+</div>
+
+<div class="container">
+    <p class="intro">
+        These terms are designed to ensure safety, transparency, and a smooth rental experience for all users.
     </p>
 
-    <h4>2. Booking & Payment</h4>
-    <p>
-        Booking can be made online, but payment must be completed offline at the time of vehicle pickup.
-        A refundable security deposit may be required. Rental prices do not include fuel, fines, or penalties.
-    </p>
+    <div class="grid">
 
-    <h4>3. Vehicle Usage</h4>
-    <p>
-        Vehicles must be used responsibly and only for legal purposes.
-        Misuse such as racing, illegal activities, or driving under the influence is strictly prohibited.
-    </p>
+        <div class="card">
+            <h2>1. Self-Drive Only</h2>
+            <ul>
+                <li>No driver provided</li>
+                <li>Ensures privacy and comfort</li>
+                <li>Full control of journey</li>
+            </ul>
+        </div>
 
-    <h4>4. Return Policy</h4>
-    <p>
-        Vehicles must be returned on time and in the same condition.
-        Late returns or unclean vehicles may result in additional charges.
-    </p>
+        <div class="card">
+            <h2>2. Fixed Daily Pricing</h2>
+            <ul>
+                <li>Charges per day</li>
+                <li>No hidden costs</li>
+                <li>Simple pricing model</li>
+            </ul>
+        </div>
 
-    <h4>5. Damage & Liability</h4>
-    <p>
-        The renter is responsible for any damage, theft, or loss during the rental period.
-        In case of an accident, authorities and the company must be informed immediately.
-    </p>
+        <div class="card">
+            <h2>3. GPS Tracking</h2>
+            <ul>
+                <li>All vehicles tracked</li>
+                <li>Improves safety</li>
+                <li>Helps in emergencies</li>
+            </ul>
+        </div>
 
-    <h4>6. Cancellation Policy</h4>
-    <p>
-        Free cancellation is allowed up to 72 hours before booking.
-        Late cancellations may incur charges.
-    </p>
+        <div class="card">
+            <h2>4. Payment on Delivery</h2>
+            <ul>
+                <li>Immediate payment required</li>
+                <li>Prevents misuse</li>
+                <li>Ensures commitment</li>
+            </ul>
+        </div>
 
-    <hr class="my-5">
+        <div class="card">
+            <h2>5. Fuel Policy</h2>
+            <ul>
+                <li>Return with same fuel level</li>
+                <li>Fair usage policy</li>
+            </ul>
+        </div>
 
-    <h1 class="text-center mb-4">Privacy Policy</h1>
+        <div class="card">
+            <h2>6. Availability Lock</h2>
+            <ul>
+                <li>Instant booking lock</li>
+                <li>No double booking</li>
+            </ul>
+        </div>
 
-    <h4>1. Information We Collect</h4>
-    <p>
-        We collect personal details such as name, contact information, ID proof,
-        and driving license for verification purposes.
-    </p>
+        <div class="card">
+            <h2>7. Digital Agreement</h2>
+            <ul>
+                <li>No paperwork</li>
+                <li>Online acceptance</li>
+            </ul>
+        </div>
 
-    <h4>2. Use of Information</h4>
-    <p>
-        Your data is used to manage bookings, verify identity, and improve our services.
-    </p>
+        <div class="card">
+            <h2>8. Late Return Penalty</h2>
+            <ul>
+                <li>Automatic charges</li>
+                <li>Ensures fairness</li>
+            </ul>
+        </div>
 
-    <h4>3. Data Protection</h4>
-    <p>
-        We ensure your data is stored securely and not shared unnecessarily.
-    </p>
+        <div class="card">
+            <h2>9. Rating System</h2>
+            <ul>
+                <li>User & car ratings</li>
+                <li>Builds trust</li>
+            </ul>
+        </div>
 
-    <h4>4. Data Sharing</h4>
-    <p>
-        Data may be shared with legal authorities if required by law.
-    </p>
+        <div class="card">
+            <h2>10. Emergency Support</h2>
+            <ul>
+                <li>Quick assistance</li>
+                <li>Added safety layer</li>
+            </ul>
+        </div>
 
-    <h4>5. Consent</h4>
-    <p>
-        By using our platform, you agree to our Terms & Privacy Policy.
+        <div class="card">
+            <h2>11. Damage Policy</h2>
+            <ul>
+                <li>User responsible for damage</li>
+                <li>Charges based on assessment</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>12. Minimal Documentation</h2>
+            <ul>
+                <li>Only essential documents</li>
+                <li>Faster onboarding</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <p class="closing">
+        These policies make RentEase secure, transparent, and user-friendly compared to traditional rental systems.
     </p>
 </div>
+
+</body>
+</html>
