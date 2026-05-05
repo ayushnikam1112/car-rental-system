@@ -15,7 +15,24 @@ body{
     width: auto;
     object-fit: contain;
 }
+/* Dark mode header fix */
+body.dark .header {
+    background-color: #1e1e1e;  /* dark background */
+}
 
+.footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+}
+
+.footer a:hover {
+  color: #0d6efd;
+}
+
+body.dark .header h1,
+body.dark .header p {
+    color: #fff;  /* make text visible */
+}
 #loader {
   position: fixed;
   top: 0;

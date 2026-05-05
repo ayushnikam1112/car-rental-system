@@ -11,6 +11,8 @@ router.get("/new/:id", isLoggedIn, async (req, res) => {
   res.render("bookings/new", { car });
 });
 
+
+
 const { isAdmin } = require("../middleware");
 router.get("/admin/dashboard", isLoggedIn, isAdmin, async (req, res) => {
 
@@ -90,44 +92,60 @@ const revenueTrends = await Booking.aggregate([
     revenueTrends
   });
 });
-
-// create booking
 router.post("/:id", isLoggedIn, async (req, res) => {
   const { fromDate, toDate } = req.body;
 
   const car = await Listing.findById(req.params.id);
 
-     const existingBooking = await Booking.findOne({
-    car:  car._id,
+  // convert to Date objects
+  const start = new Date(fromDate);
+  const end = new Date(toDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // block past dates
+  if (start < today) {
+    req.flash("error", "Past dates not allowed");
+    return res.redirect("back");
+  }
+
+  // invalid range
+  if (end <= start) {
+    req.flash("error", "Invalid date range");
+    return res.redirect("back");
+  }
+
+  // check overlapping bookings
+  const existingBooking = await Booking.findOne({
+    car: car._id,
     $or: [
       {
-        fromDate: { $lte: toDate },
-        toDate: { $gte: fromDate }
+        fromDate: { $lt: end },
+        toDate: { $gt: start }
       }
     ]
   });
 
   if (existingBooking) {
     req.flash("error", "Car already booked for selected dates");
-    return   res.redirect("/bookings/my");
-
+    return res.redirect("back");
   }
-  const days =
-    (new Date(toDate) - new Date(fromDate)) / (1000 * 60 * 60 * 24);
 
+  // calculate days
+  const days = (end - start) / (1000 * 60 * 60 * 24);
   const totalPrice = days * car.price;
 
   const booking = new Booking({
     car: car._id,
     user: req.user._id,
-    fromDate,
-    toDate,
+    fromDate: start,
+    toDate: end,
     totalPrice
   });
 
   await booking.save();
 
-  req.flash("success", "Car booked successfully ");
+  req.flash("success", "Car booked successfully");
   res.redirect("/bookings/my");
 });
 
@@ -141,31 +159,34 @@ router.get("/my", isLoggedIn, async (req, res) => {
 router.get("/admin", isLoggedIn, isAdmin, async (req, res) => {
   const bookings = await Booking.find({})
     .populate("car")
-    .populate("user");
+    .populate("user")
+    .sort({ createdAt: -1 });
 
   res.render("bookings/admin", { bookings });
 });
-
 router.post("/:id/approve", isLoggedIn, isAdmin, async (req, res) => {
- 
- const booking= await Booking.findByIdAndUpdate(req.params.id, {
-    status: "approved"
-  }).populate("user")
+
+  const booking = await Booking.findByIdAndUpdate(
+    req.params.id,
+    { status: "approved" },
+    { new: true }
+  )
+  .populate("user")
   .populate("car");
 
-  const user=booking.user;
-  console.log(user);
-   const x= await sendEmail(
-  user.email,
-  "Booking Approved ",
-  `
-  Booking Approved
+  const user = booking.user;
+
+  await sendEmail(
+    user.email,
+    "Booking Approved",
+    `
+Booking Approved
 
 Hello ${user.username},
 
 Your car booking has been approved by admin.
 
-Car: ${booking.car.title}
+Car: ${booking.car ? booking.car.title : "Car not available"}
 From: ${booking.fromDate.toDateString()}
 To: ${booking.toDate.toDateString()}
 Total Price: ₹${booking.totalPrice}
@@ -173,14 +194,13 @@ Total Price: ₹${booking.totalPrice}
 We wish you a safe and happy journey!
 
 Thank you for choosing RentEase
-  `
-);
- console.log(x);
-  console.log("Email send");
+    `
+  );
 
-  req.flash("success", "Booking Approved ");
+  req.flash("success", "Booking Approved");
   res.redirect("/bookings/admin");
 });
+
 
 router.post("/:id/reject", isLoggedIn, isAdmin, async (req, res) => {
 
@@ -198,28 +218,25 @@ router.post("/:id/reject", isLoggedIn, isAdmin, async (req, res) => {
     user.email,
     "Booking Rejected",
     `
-    Booking Rejected
+Booking Rejected
 
-    Hello ${user.username},
+Hello ${user.username},
 
-    We regret to inform you that your car booking has been rejected by admin.
+We regret to inform you that your car booking has been rejected by admin.
 
-    Car: ${booking.car.title}
-    From: ${booking.fromDate.toDateString()}
-    To: ${booking.toDate.toDateString()}
-    Total Price: ₹${booking.totalPrice}
+Car: ${booking.car ? booking.car.title : "Car not available"}
+From: ${booking.fromDate.toDateString()}
+To: ${booking.toDate.toDateString()}
+Total Price: ₹${booking.totalPrice}
 
-    If you have any questions, feel free to contact us.
+If you have any questions, feel free to contact us.
 
-    Thank you for choosing RentEase
+Thank you for choosing RentEase
     `
   );
-
-  console.log("Rejection email sent");
 
   req.flash("success", "Booking Rejected");
   res.redirect("/bookings/admin");
 });
-
 
 module.exports = router;

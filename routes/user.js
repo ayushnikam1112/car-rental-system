@@ -17,31 +17,56 @@ router.get("/login", (req, res) => {
 });
 
 const sendEmail = require("../utils/email");
-
 router.post("/signup", wrapAsync(async (req, res, next) => {
     try {
-let { username, email, password, otp } = req.body;
+        let { username, email, password, otp } = req.body;
 
 
-        // 🔹 STEP 1: Send OTP
+        if (!otp) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+    if (!passwordRegex.test(password)) {
+        req.flash("error", "Password must be at least 6 characters and include uppercase, lowercase, and a number.");
+        return res.redirect("/signup");
+    }
+}
+
+
+        //  Generate OTP
         if (!otp) {
             const generatedOtp = Math.floor(100000 + Math.random() * 900000);
 
             req.session.otp = generatedOtp;
+            req.session.otpExpiry = Date.now() + 5 * 60 * 1000; // ✅ 5 min expiry
             req.session.userData = { username, email, password };
+
             await sendEmail(
                 email,
                 "Your OTP",
-                `Your OTP is ${generatedOtp}`
+                `Your OTP is ${generatedOtp}. It will expire in 5 minutes.`
             );
-        console.log(generatedOtp);
-            return res.render("users/signup", { otpSent: true ,userData: req.session.userData  });
+
+            console.log(generatedOtp);
+
+            return res.render("users/signup", { 
+                otpSent: true, 
+                userData: req.session.userData 
+            });
         }
 
-        // 🔹 STEP 2: Verify OTP
+        // Check expiry first
+        if (Date.now() > req.session.otpExpiry) {
+            req.session.otp = null;
+            req.session.otpExpiry = null;
+
+            req.flash("error", "OTP expired. Please request a new one.");
+            return res.redirect("/signup");
+        }
+
+        //  Verify OTP
         if (otp == req.session.otp) {
 
-            const data = req.session.userData; 
+            const data = req.session.userData;
 
             const newUser = new User({
                 email: data.email,
@@ -62,16 +87,19 @@ let { username, email, password, otp } = req.body;
                     "Thanks for signing up"
                 );
 
-                // clear session
                 req.session.otp = null;
+                req.session.otpExpiry = null;
                 req.session.userData = null;
 
                 res.redirect("/");
             });
 
         } else {
-            req.flash("error", "Invalid OTP ");
-            res.render("users/signup", { otpSent: true, userData: req.session.userData }); 
+            req.flash("error", "Invalid OTP");
+            res.render("users/signup", { 
+                otpSent: true, 
+                userData: req.session.userData 
+            });
         }
 
     } catch (e) {

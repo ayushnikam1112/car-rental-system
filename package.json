@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "chromedriver": "^148.0.0",
     "cloudinary": "^1.41.3",
     "connect-flash": "^0.1.1",
     "dotenv": "^17.3.1",
@@ -27,6 +28,15 @@
     "nodemailer": "^8.0.4",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^9.0.1"
-  }
+    "passport-local-mongoose": "^9.0.1",
+    "selenium-webdriver": "^4.43.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayushnikam1112/car-rental-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ayushnikam1112/car-rental-system/issues"
+  },
+  "homepage": "https://github.com/ayushnikam1112/car-rental-system#readme"
 }

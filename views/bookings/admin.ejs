@@ -6,7 +6,7 @@
   <% bookings.forEach(b => { %>
 
     <div class="card mb-3 shadow-sm p-3">
-      <h5><%= b.car.title %></h5> <br>
+      <h5><%= b.car ? b.car.title : "Car not available" %></h5>
       <p>
      <b>User:</b> <%= b.user.username %> <br></p>
     <p><b>Email:</b> <span class="text-primary"><%= b.user.email %></span>

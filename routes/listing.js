@@ -7,9 +7,9 @@ const Listing=require("../models/listing.js")
 const mongoose = require("mongoose");
 const {isLoggedIn,isAdmin}=require("../middleware.js");
 const upload = require("../multer");
+const Booking = require("../models/booking");
 const validateListing=(req,res,next)=>{
      let {error}=listingSchema.validate(req.body);
-   
    if(error){
     let errMsg=error.details.map((el)=>el.message).join(",");
     throw new ExpressError(400,errMsg);
@@ -71,7 +71,20 @@ router.get("/:id",wrapAsync(async(req,res)=>{
     req.flash("error","Does Not Exist");
    return res.redirect("/listings");
    }
-   res.render("listings/show.ejs",{listing});
+  const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const bookings = await Booking.find({
+  car: id,
+  status: "approved",        // only approved bookings
+  toDate: { $gte: today }    // only current/future bookings
+})
+.sort({ fromDate: 1 })
+.limit(4);
+
+
+
+   res.render("listings/show.ejs",{listing,bookings});
 }))
 
 //create rout
@@ -80,7 +93,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 
   const newListing = new Listing(req.body.listing);
 
-  // 🔥 attach uploaded image
+ 
   if (req.file) {
     newListing.image = {
       url: req.file.path,

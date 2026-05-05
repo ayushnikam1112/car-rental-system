@@ -1,62 +1,78 @@
-// Example starter JavaScript for disabling form submissions if there are invalid fields
 (() => {
-  'use strict'
+  'use strict';
 
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  const forms = document.querySelectorAll('.needs-validation')
+  const forms = document.querySelectorAll('.needs-validation');
 
-  // Loop over them and prevent submission
   Array.from(forms).forEach(form => {
     form.addEventListener('submit', event => {
       if (!form.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
+        event.preventDefault();
+        event.stopPropagation();
       }
+      form.classList.add('was-validated');
+    }, false);
+  });
+})();
 
-      form.classList.add('was-validated')
-    }, false)
-  })
-})()
 
+document.addEventListener("DOMContentLoaded", () => {
 
-const fromDate = document.getElementById("fromDate");
-const toDate = document.getElementById("toDate");
-const totalPriceEl = document.getElementById("totalPrice");
+  const fromDate = document.getElementById("fromDate");
+  const toDate = document.getElementById("toDate");
+  const totalPriceEl = document.getElementById("totalPrice");
 
-const pricePerDay = window.carPrice;
+  if (!fromDate || !toDate || !totalPriceEl) return;
 
-// calculate only when both selected
-function calculatePrice() {
-  if (!fromDate.value || !toDate.value) {
-    totalPriceEl.innerText = "₹ 0";
-    return;
+  const pricePerDay = window.carPrice || 0;
+
+  const today = new Date().toISOString().split("T")[0];
+
+  // restrict past dates
+  fromDate.setAttribute("min", today);
+  toDate.setAttribute("min", today);
+
+  // update toDate minimum when fromDate changes
+  fromDate.addEventListener("change", () => {
+    toDate.setAttribute("min", fromDate.value);
+    calculatePrice();
+  });
+
+  function calculatePrice() {
+    if (!fromDate.value || !toDate.value) {
+      totalPriceEl.innerText = "₹ 0";
+      return;
+    }
+
+    const start = new Date(fromDate.value);
+    const end = new Date(toDate.value);
+    const todayDate = new Date(today);
+
+    if (start < todayDate) {
+      totalPriceEl.innerText = "Past date not allowed";
+      return;
+    }
+
+    if (end <= start) {
+      totalPriceEl.innerText = "Invalid Dates";
+      return;
+    }
+
+    const days = (end - start) / (1000 * 60 * 60 * 24);
+    const total = days * pricePerDay;
+
+    totalPriceEl.innerText = "₹ " + total.toLocaleString("en-IN");
   }
 
-  const start = new Date(fromDate.value);
-  const end = new Date(toDate.value);
+  toDate.addEventListener("change", calculatePrice);
+});
 
-  if (end <= start) {
-    totalPriceEl.innerText = "Invalid Dates";
-    return;
-  }
 
-  const days = (end - start) / (1000 * 60 * 60 * 24);
-  const total = days * pricePerDay;
-
-  totalPriceEl.innerText = "₹ " + total.toLocaleString("en-IN");
-}
-
-// trigger only when toDate changes
-toDate.addEventListener("change", calculatePrice);
-
-const today = new Date().toISOString().split("T")[0];
-fromDate.setAttribute("min", today);
-toDate.setAttribute("min", today);
-
+// Loader (safe)
 const form = document.querySelector("form");
 
 if (form) {
   form.addEventListener("submit", () => {
-    document.getElementById("loader").style.display = "flex";
+    const loader = document.getElementById("loader");
+    if (loader) loader.style.display = "flex";
   });
 }
